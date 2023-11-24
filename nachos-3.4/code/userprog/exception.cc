@@ -101,6 +101,25 @@ int System2User(int virtAddr,int len,char* buffer)
         return i; 
 } 
 
+void ExceptionHandlerReadChar() {
+    char c = 0;
+    gSynchConsole->Read(&c,1);
+    machine->WriteRegister(2, (int)c);
+    int pcAfter = machine->ReadRegister(NextPCReg) + 4;
+    machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+    machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+    machine->WriteRegister(NextPCReg, pcAfter);
+}
+void ExceptionHandlerPrintChar() {
+    char c = (char)machine->ReadRegister(4);
+    gSynchConsole->Write(&c,1);
+    machine->WriteRegister(2, 0);
+    int pcAfter = machine->ReadRegister(NextPCReg) + 4;
+    machine->WriteRegister(PrevPCReg, machine->ReadRegister(PCReg));
+    machine->WriteRegister(PCReg, machine->ReadRegister(NextPCReg));
+    machine->WriteRegister(NextPCReg, pcAfter);
+}
+
 
 
 void
