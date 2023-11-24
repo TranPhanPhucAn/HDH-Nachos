@@ -111,6 +111,37 @@ ExceptionHandler(ExceptionType which)
     switch(which){
         case NoException: 
             return; 
+        
+        case PageFaultException:
+            DEBUG(‘a’, "\n Page Fault Exception."); 
+            printf ("\n\n Page Fault Exception."); 
+            interrupt->Halt(); 
+            break; 
+        case ReadOnlyException:
+            DEBUG(‘a’, "\n Read Only Exception."); 
+            printf ("\n\n Read Only Exception."); 
+            interrupt->Halt(); 
+            break; 
+        case BusErrorException:
+            DEBUG(‘a’, "\n Bus Error Exception."); 
+            printf ("\n\n Bus Error Exception."); 
+            interrupt->Halt(); 
+            break;
+        case AddressErrorException:
+            DEBUG(‘a’, "\n Address Error Exception."); 
+            printf ("\n\n Address Error Exception."); 
+            interrupt->Halt(); 
+            break;
+        case OverflowException:
+            DEBUG(‘a’, "\n Overflow Exception."); 
+            printf ("\n\n Overflow Exception."); 
+            interrupt->Halt(); 
+            break;
+        case IllegalInstrException:
+            DEBUG(‘a’, "\n Illegal Instruction Exception."); 
+            printf ("\n\n Illegal Instruction Exception."); 
+            interrupt->Halt(); 
+            break;
         case SyscallException: 
             switch (type){ 
                 case SC_Halt: 
@@ -164,38 +195,6 @@ ExceptionHandler(ExceptionType which)
                 printf("\n Unexpected user mode exception (%d %d)", which, 
                 type); 
                 interrupt->Halt();
-    
-        case PageFaultException:
-            DEBUG(‘a’, "\n Page Fault Exception."); 
-            printf ("\n\n Page Fault Exception."); 
-            interrupt->Halt(); 
-            break; 
-        case ReadOnlyException:
-            DEBUG(‘a’, "\n Read Only Exception."); 
-            printf ("\n\n Read Only Exception."); 
-            interrupt->Halt(); 
-            break; 
-        case BusErrorException:
-            DEBUG(‘a’, "\n Bus Error Exception."); 
-            printf ("\n\n Bus Error Exception."); 
-            interrupt->Halt(); 
-            break;
-        case AddressErrorException:
-            DEBUG(‘a’, "\n Address Error Exception."); 
-            printf ("\n\n Address Error Exception."); 
-            interrupt->Halt(); 
-            break;
-        case OverflowException:
-            DEBUG(‘a’, "\n Overflow Exception."); 
-            printf ("\n\n Overflow Exception."); 
-            interrupt->Halt(); 
-            break;
-        case IllegalInstrException:
-            DEBUG(‘a’, "\n Illegal Instruction Exception."); 
-            printf ("\n\n Illegal Instruction Exception."); 
-            interrupt->Halt(); 
-            break;
-        
     }
 
     // if ((which == SyscallException) && (type == SC_Halt)) {
