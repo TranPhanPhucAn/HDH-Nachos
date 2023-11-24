@@ -142,6 +142,11 @@ ExceptionHandler(ExceptionType which)
             printf ("\n\n Illegal Instruction Exception."); 
             interrupt->Halt(); 
             break;
+        case NumExceptionTypes:
+            DEBUG(‘a’, "\n Num Exception Types."); 
+            printf ("\n\n Num Exception Types."); 
+            interrupt->Halt(); 
+            break;
         case SyscallException: 
             switch (type){ 
                 case SC_Halt: 
