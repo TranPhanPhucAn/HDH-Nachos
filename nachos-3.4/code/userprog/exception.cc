@@ -99,7 +99,58 @@ int System2User(int virtAddr,int len,char* buffer)
         i ++; 
     }while(i < len && oneChar != 0); 
         return i; 
-} 
+}
+
+
+void ExceptionHandlerReadInt() {
+	int maxLenBuffer = 11;
+	char* buffer = new char[maxLenBuffer + 1];
+	int res = 0;
+	// Read input buffer and return number of byte read
+	int len = gSynchConsole->Read(buffer, maxLenBuffer);
+    int i = (buffer[0] == '-') ? 1 : 0;
+	for (i; i < len; i++){
+		if (buffer[i] >= '0' && buffer[i] <= '9'){
+			res = res * 10 + (buffer[i] - '0');
+		}
+		else{
+			DEBUG('a', "\nInvalid input.");
+			// Return 0 if invalid input
+			machine->WriteRegister(2, 0);
+			printf("\n Invalid input.");
+			delete buffer;
+			return;
+		}
+	} 
+	res = (buffer[0] == '-') ? (-1 * res) : res;
+	machine->WriteRegister(2, res);
+	delete buffer;
+	return;
+
+}
+
+void ExceptionHandlerPrintInt() {
+	int number = machine->ReadRegister(4);
+	int maxLen = 11;	
+	char* buffer = new char[maxLen + 1];
+	char* temp_buffer = new char[maxLen + 1];
+	int len = 0;
+	int i = 0;
+	if (number < 0){
+		number *= -1;
+		buffer[i++] = '-';
+        len = 1;
+	}
+	do {
+        	temp_buffer[len++] = number % 10;
+        	number /= 10;
+    	} while (number);
+   	for(int j = len - 1; j >= 0; j--) 
+        	buffer[i++] = '0' + (char)temp_buffer[j];
+    	gSynchConsole->Write(buffer, len);
+	delete buffer, temp_buffer;
+}
+
 
 void ExceptionHandlerReadChar() {
     char c = 0;
@@ -124,45 +175,45 @@ ExceptionHandler(ExceptionType which)
             return; 
         
         case PageFaultException:
-            DEBUG('a', "\n Page Fault Exception."); 
-            printf ("\n\n Page Fault Exception."); 
+            DEBUG('a', "\nPage Fault Exception."); 
+            printf ("\n\nPage Fault Exception."); 
             interrupt->Halt(); 
             break; 
         case ReadOnlyException:
-            DEBUG('a', "\n Read Only Exception."); 
-            printf ("\n\n Read Only Exception."); 
+            DEBUG('a', "\nRead Only Exception."); 
+            printf ("\n\nRead Only Exception."); 
             interrupt->Halt(); 
             break; 
         case BusErrorException:
-            DEBUG('a', "\n Bus Error Exception."); 
-            printf ("\n\n Bus Error Exception."); 
+            DEBUG('a', "\nBus Error Exception."); 
+            printf ("\n\nBus Error Exception."); 
             interrupt->Halt(); 
             break;
         case AddressErrorException:
-            DEBUG('a', "\n Address Error Exception."); 
-            printf ("\n\n Address Error Exception."); 
+            DEBUG('a', "\nAddress Error Exception."); 
+            printf ("\n\nAddress Error Exception."); 
             interrupt->Halt(); 
             break;
         case OverflowException:
-            DEBUG('a', "\n Overflow Exception."); 
-            printf ("\n\n Overflow Exception."); 
+            DEBUG('a', "\nOverflow Exception."); 
+            printf ("\n\nOverflow Exception."); 
             interrupt->Halt(); 
             break;
         case IllegalInstrException:
-            DEBUG('a', "\n Illegal Instruction Exception."); 
-            printf ("\n\n Illegal Instruction Exception."); 
+            DEBUG('a', "\nIllegal Instruction Exception."); 
+            printf ("\n\nIllegal Instruction Exception."); 
             interrupt->Halt(); 
             break;
         case NumExceptionTypes:
-            DEBUG('a', "\n Num Exception Types."); 
-            printf ("\n\n Num Exception Types."); 
+            DEBUG('a', "\nNum Exception Types."); 
+            printf ("\n\nNum Exception Types."); 
             interrupt->Halt(); 
             break;
         case SyscallException: 
             switch (type){ 
                 case SC_Halt: 
-                    DEBUG('a', "\n Shutdown, initiated by user program."); 
-                    printf ("\n\n Shutdown, initiated by user program."); 
+                    DEBUG('a', "\nShutdown, initiated by user program."); 
+                    printf ("\n\nShutdown, initiated by user program."); 
                     interrupt->Halt(); 
                     break;
                 case SC_ReadChar:
@@ -173,6 +224,14 @@ ExceptionHandler(ExceptionType which)
                     ExceptionHandlerPrintChar();
                     IncreasePC();
                     break;
+		case SC_ReadInt:
+		    ExceptionHandlerReadInt();
+		    IncreasePC();
+		    break;
+		case SC_PrintInt:
+		    ExceptionHandlerPrintInt();
+		    IncreasePC();
+		    break;
 		}
 		break;      
             
@@ -183,11 +242,4 @@ ExceptionHandler(ExceptionType which)
                 interrupt->Halt();
     }
 
-    // if ((which == SyscallException) && (type == SC_Halt)) {
-	// DEBUG('a', "Shutdown, initiated by user program.\n");
-   	// interrupt->Halt();
-    // } else {
-	// printf("Unexpected user mode exception %d %d\n", which, type);
-	// ASSERT(FALSE);
-    // }
 }
