@@ -36,6 +36,11 @@
 #define SC_ReadChar 13
 #define SC_PrintChar 14
 
+#define SC_ReadString 15
+#define SC_PrintString 16
+
+#define MAX_STRING_SIZE 100
+
 #ifndef IN_ASM
 
 /* The system call interface.  These are the operations the Nachos
@@ -137,6 +142,10 @@ void PrintInt(int number);
 char ReadChar();
 
 void PrintChar(char character);
+
+void ReadString(char* buffer, int length);
+
+void PrintString(char* buffer);
 
 #endif /* IN_ASM */
 

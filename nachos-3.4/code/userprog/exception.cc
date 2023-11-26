@@ -163,7 +163,34 @@ void ExceptionHandlerPrintChar() {
     machine->WriteRegister(2, 0);
 }
 
+void ExceptionHandlerReadString(){
+    int buffeAddress = machine->ReadRegister(4);
+    int maxLength = machine->ReadRegister(5);
 
+    char *buffer = new char[maxLength + 1];
+    int len = gSynchConsole->Read(buffer, maxLength);
+
+    buffer[len] = '\0';
+
+    System2User(buffeAddress, len +1 , buffer);
+    delete buffer;  
+}
+
+void ExceptionHandlerPrintString(){
+    int bufferAddress = machine->ReadRegister(4);
+    char* buffer = User2System(bufferAddress, MAX_STRING_SIZE);
+
+    int len = strlen(buffer);
+
+    for(int i =0;i<len;i++){
+        gSynchConsole->Write(&buffer[i], 1);
+    }
+
+    char nullChar = '\0';
+    gSynchConsole->Write(&nullChar, 1);
+
+    delete buffer;
+}
 
 void
 ExceptionHandler(ExceptionType which)
@@ -232,6 +259,14 @@ ExceptionHandler(ExceptionType which)
 		    ExceptionHandlerPrintInt();
 		    IncreasePC();
 		    break;
+		case SC_ReadString:
+                    ExceptionHandlerReadString();
+                    IncreasePC();
+               	    break;
+           	 case SC_PrintString:
+                    ExceptionHandlerPrintString();
+            	    IncreasePC();
+                    break;
 		}
 		break;      
             

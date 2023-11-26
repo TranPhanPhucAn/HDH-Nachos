@@ -1,32 +1,51 @@
 /* sort.c 
- *    Test program to sort a large number of integers.
- *
- *    Intention is to stress virtual memory system.
- *
- *    Ideally, we could read the unsorted array off of the file system,
- *	and store the result back to the file system!
+ *  Sort user-input array with bubble sort algorithm
  */
 
 #include "syscall.h"
 
-int A[1024];	/* size of physical memory; with code, we'll run out of space!*/
-
-int
-main()
-{
-    int i, j, tmp;
-
-    /* first initialize the array, in reverse sorted order */
-    for (i = 0; i < 1024; i++)		
-        A[i] = 1024 - i;
-
-    /* then sort! */
-    for (i = 0; i < 1023; i++)
-        for (j = i; j < (1023 - i); j++)
-	   if (A[j] > A[j + 1]) {	/* out of order -> need to swap ! */
-	      tmp = A[j];
-	      A[j] = A[j + 1];
-	      A[j + 1] = tmp;
-    	   }
-    Exit(A[0]);		/* and then we're done -- should be 0! */
+int main() {
+	int n, i, j, tmp;
+	int a[100];
+	PrintString("=====SORTING=====\n");
+	PrintString("Input array size (<100): ");
+	n = ReadInt();
+	if (n < 1 || n > 100) {
+		PrintString("Invalid input\n");
+		Halt();
+	}
+	for (i = 0; i < n; ++i) {
+        	PrintString("a[");
+        	PrintInt(i);
+        	PrintString("] = ");
+       		a[i] = 0;
+        	a[i] = ReadInt();
+	}
+	PrintString("Before sorting: ");
+	PrintChar('[');
+	for (i = 0; i < n; ++i) {
+        	PrintInt(a[i]);
+		if (i != n - 1) PrintChar(' ');
+		else PrintChar(']');
+	}
+	PrintChar('\n');
+    	for (i = 0; i < n - 1; ++i) {
+        	for (j = 0; j < (n - 1 - i); ++j) {
+			if (a[j] > a[j + 1]) {
+	      			tmp = a[j];
+	     			a[j] = a[j + 1];
+     			 	a[j + 1] = tmp;
+    	   		}
+		}
+	}
+	
+	PrintString("After sorting: ");
+	PrintChar('[');
+	for (i = 0; i < n; ++i) {
+        	PrintInt(a[i]);
+		if (i != n - 1) PrintChar(' ');
+		else PrintChar(']');
+	}
+	Halt();
 }
+
