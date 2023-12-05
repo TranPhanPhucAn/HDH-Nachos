@@ -109,17 +109,25 @@ void ExceptionHandlerReadInt() {
 	// Read input buffer and return number of byte read
 	int len = gSynchConsole->Read(buffer, maxLenBuffer);
     int i = (buffer[0] == '-') ? 1 : 0;
+    bool checkDot=false;
 	for (i; i < len; i++){
 		if (buffer[i] >= '0' && buffer[i] <= '9'){
-			res = res * 10 + (buffer[i] - '0');
+            if (buffer[i]-'0' && checkDot)
+                goto next;
+			if (!checkDot)
+                res = res * 10 + (buffer[i] - '0');
 		}
+        else if (buffer[i]=='.'){
+            checkDot=true;
+        }
 		else{
-			DEBUG('a', "\nInvalid input.");
-			// Return 0 if invalid input
-			machine->WriteRegister(2, 0);
-			printf("\n Invalid input.");
-			delete buffer;
-			return;
+            next: 
+                DEBUG('a', "\nInvalid input.");
+                // Return 0 if invalid input
+                machine->WriteRegister(2, 0);
+                printf("\n Invalid input.");
+                delete buffer;
+                return;
 		}
 	} 
 	res = (buffer[0] == '-') ? (-1 * res) : res;
@@ -199,8 +207,7 @@ ExceptionHandler(ExceptionType which)
 
     switch(which){
         case NoException: 
-            return; 
-        
+            return;         
         case PageFaultException:
             DEBUG('a', "\nPage Fault Exception."); 
             printf ("\n\nPage Fault Exception."); 
@@ -251,21 +258,21 @@ ExceptionHandler(ExceptionType which)
                     ExceptionHandlerPrintChar();
                     IncreasePC();
                     break;
-		case SC_ReadInt:
-		    ExceptionHandlerReadInt();
-		    IncreasePC();
-		    break;
-		case SC_PrintInt:
-		    ExceptionHandlerPrintInt();
-		    IncreasePC();
-		    break;
-		case SC_ReadString:
+                case SC_ReadInt:
+                    ExceptionHandlerReadInt();
+                    IncreasePC();
+                    break;
+                case SC_PrintInt:
+                    ExceptionHandlerPrintInt();
+                    IncreasePC();
+                    break;
+                case SC_ReadString:
                     ExceptionHandlerReadString();
                     IncreasePC();
-               	    break;
-           	 case SC_PrintString:
+                    break;
+                case SC_PrintString:
                     ExceptionHandlerPrintString();
-            	    IncreasePC();
+                    IncreasePC();
                     break;
 		}
 		break;      
