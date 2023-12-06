@@ -8,11 +8,13 @@ int main() {
 	int n, i, j, tmp;
 	int a[100];
 	PrintString("=====SORTING=====\n");
-	PrintString("Input array size (<100): ");
-	n = ReadInt();
-	if (n < 1 || n > 100) {
-		PrintString("Invalid input\n");
-		Halt();
+	n = 0;
+	while (n < 1 || n > 100) {
+		PrintString("Input array size (0 < n <= 100): ");
+		n = ReadInt();
+		if (n < 1 || n > 100) {
+			PrintString("Invalid input\n");
+		}
 	}
 	for (i = 0; i < n; ++i) {
         	PrintString("a[");
